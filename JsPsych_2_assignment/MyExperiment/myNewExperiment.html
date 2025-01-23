@@ -58,8 +58,8 @@
 
     /* define trial stimuli array for timeline variables */
     var test_stimuli = [
-      { stimulus: "img/bluesquare.png", stimulus_type: 'blue_square', correct_response: 'f'},
-      { stimulus: "img/orangecircle.png", stimulus_type: 'orange_circle', correct_response: 'j'}
+      { stimulus: "img/bluesquare.png", stimulus_shape: 'blue_square', correct_response: 'f'},
+      { stimulus: "img/orangecircle.png", stimulus_shape: 'orange_circle', correct_response: 'j'}
     ];
 
     /* define fixation and test trials */
@@ -81,7 +81,7 @@
       choices: ['f', 'j'],
       data: {
         task: 'response',
-        stimulus_type: jsPsych.timelineVariable('stimulus_type'),
+        stimulus_shape: jsPsych.timelineVariable('stimulus_shape'),
         correct_response: jsPsych.timelineVariable('correct_response')
       },
       on_finish: function(data){
@@ -107,13 +107,13 @@
         var correct_trials = trials.filter({correct: true});
         var accuracy = Math.round(correct_trials.count() / trials.count() * 100);
         var rt = Math.round(correct_trials.select('rt').mean());
-        var avgBlue = Math.round(trials.filter({stimulus_type: 'blue_square'}).select('rt').mean());
-        var avgOrange = Math.round(trials.filter({stimulus_type: 'orange_circle'}).select('rt').mean());
+        var RTBlue = Math.round(trials.filter({stimulus_shape: 'blue_square'}).select('rt').mean());
+        var RTOrange = Math.round(trials.filter({stimulus_shape: 'orange_circle'}).select('rt').mean());
 
         return `<p>You responded correctly on ${accuracy}% of the trials.</p>
           <p>Your average response time was ${rt}ms.</p>
-          <p>For blue Squares: ${avgBlue} ms</p>
-          <p>For orange Circles: ${avgOrange} ms</p>
+          <p>For blue Squares: ${RTBlue} ms.</p>
+          <p>For orange Circles: ${RTOrange} ms.</p>
           <p>Press any key to complete the experiment. Thank you!</p>`;
 
       }
