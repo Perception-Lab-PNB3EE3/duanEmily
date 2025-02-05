@@ -2,9 +2,8 @@
 title: "dataVisualisation analyses"
 output: html_notebook
 ---
-
+# Install essential packages for data visualization
 ```{r}
-# Install and load some packages for data visualization
 list.of.packages <- c("tidyverse", "ggpubr", "ez", "corrplot", "car", "stats","PerformanceAnalytics", "afex", "emmeans", "mlma", "ggplot2", "ggExtra", "psych", "ggpubr", "here", "gridExtra", "ggridges", "ggpmisc","hrbrthemes")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages) 
@@ -13,13 +12,17 @@ library(psych)
 library(ggplot2)
 library(hrbrthemes)
 library(ggpmisc)
+```
 
-# Load csv file
+# Load csv file 
+```{r}
 here::i_am("dataVisualisation_analyses.Rmd")
 library(here)
 data <- read.csv(here("assignment_dataVis_dataset.csv")) 
+```
 
 # Analyse data
+```{r}
 summary(data)
 describe(data)
 conditions <- split(data, data$condition)
@@ -27,13 +30,30 @@ condition_1 <- conditions[["condition_1"]]
 condition_2 <- conditions[["condition_2"]]
 condition_3 <- conditions[["condition_3"]]
 condition_4 <- conditions[["condition_4"]]
+```
 
+## Summary stats for condition 1
+```{r}
 describe(condition_1)
-describe(condition_2)
-describe(condition_3)
-describe(condition_4)
+```
 
-# Plot graphs, separating condition 1234
+## Summary stats for condition 2
+```{r}
+describe(condition_2)
+```
+
+## Summary stats for condition 3
+```{r}
+describe(condition_3)
+```
+
+## Summary stats for condition 4
+```{r}
+describe(condition_4)
+```
+
+## Condition 1
+```{r}
 (condition1_plot <- ggplot(condition_1, aes(x=x, y=y)) +
   geom_point(size=1, alpha=0.6) +
   geom_smooth(method=lm , color="red", fill="#66ccff", se=TRUE) +
@@ -50,7 +70,10 @@ describe(condition_4)
     y = "Y Variable Label"
     )+
   xlim(0,100)+ylim(0,100))
+```
 
+## Condition 2
+```{r}
 (condition2_plot <- ggplot(condition_2, aes(x=x, y=y)) +
   geom_point(size=1, alpha=0.6) +
   geom_smooth(method=lm , color="orange", fill="#66ccff", se=TRUE) +
@@ -67,7 +90,10 @@ describe(condition_4)
     y = "Y Variable Label"
     )+
   xlim(0,100)+ylim(0,100))
+```
 
+## Condition 3
+```{r}
 (condition3_plot <- ggplot(condition_3, aes(x=x, y=y)) +
   geom_point(size=1, alpha=0.6) +
   geom_smooth(method=lm , color="yellow", fill="#66ccff", se=TRUE) +
@@ -84,7 +110,10 @@ describe(condition_4)
     y = "Y Variable Label"
     )+
   xlim(0,100)+ylim(0,100))
+```
 
+## Condition 4
+```{r}
 (condition4_plot <- ggplot(condition_4, aes(x=x, y=y)) +
   geom_point(size=1, alpha=0.6) +
   geom_smooth(method=lm , color="green", fill="#66ccff", se=TRUE) +
@@ -101,18 +130,19 @@ describe(condition_4)
     y = "Y Variable Label"
     )+
   xlim(0,100)+ylim(0,100))
-
 ```
-# What can be concluded from the dataset?
+
+# Discussion
+## What can be concluded from the dataset?
 Even though all 4 plots look different (dinosaur, universe, leaning lines and a star), but their summary statistics (e.g. mean, median, mode etc) are highly similar to each other.
 
-# What did you find most challenging about this assignment?
+## What did you find most challenging about this assignment?
 Definitely graphing by condition (and adding aesthetics to the graph, which I am curious to learn more about)
 
-# What did you learn in completing this assignment? What are you still curious about?
+## What did you learn in completing this assignment? What are you still curious about?
 I used codes like describe() and install.packages in the "Fink_Kentler_analyses.Rmd" file from the lecture. I'm still curious about exploring useful codes like the here package!
 
-# Why is it important to visualize data?
+## Why is it important to visualize data?
 Because you are able to see data patterns hidden in different conditions. In this notebook, because all conditions' data are almost exactly the same, if you create a don't create a visualization, you won't be able to see any patterns of each condition (and will not be able to see the artistic shapes!)
 
 
