@@ -1,0 +1,12 @@
+---
+title: "dataVisualisation_analyses"
+output: html_notebook
+---
+
+```{r}
+
+# Load csv file (it is at the same folder as the Rmd file)
+data <- read.csv("assignment_dataVis_dataset.csv")
+
+
+```
