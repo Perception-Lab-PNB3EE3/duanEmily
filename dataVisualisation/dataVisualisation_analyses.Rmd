@@ -14,9 +14,10 @@ library(ggplot2)
 library(hrbrthemes)
 library(ggpmisc)
 
-# Load csv file (it is at the same folder as the Rmd file, if clone the folder)
-data <- read.csv("assignment_dataVis_dataset.csv")
-View(data)
+# Load csv file
+here::i_am("dataVisualisation_analyses.Rmd")
+library(here)
+data <- read.csv(here("assignment_dataVis_dataset.csv")) 
 
 # Analyse data
 summary(data)
