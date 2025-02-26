@@ -50,24 +50,23 @@ Adapted from [https://osf.io/preprints/metaarxiv/epgjd](https://osf.io/preprints
 
 > Title: Effect of background music on decision-making.
 
-
 ## 2. Authors 
 
 > Emily Duan
 
 ## 3. Description 
 
-> Arousal and valence are crucial factors in defining emotions in music. Modality in music often accociate with valence, where minor often leads to negative energy and major often leads to positive energy. However, this does not apply to all cultures, as some region might have a opposing effect on valence. Therefore we suspect valence would have less impact than arousal. Arousal, different than valence, is a universal factor that shows a greater emotional convergence (Stevens et al., 2009). Tempo in music brings different levels of arousal (dowsy or awake) to people. We are curious about how tempo and/or valence might have an effect on performances when it comes to making decisions. Previous study done by Krahé and Bieneck (2012) has shown that pleasant music will induce postive mood, therefore reducing anger and less agrressive behaviours. In this study, we will introduce fast-positive (excitement), fast-negative (anger), slow-positive (calm), and slow-negative (sad) music. A questionnaire will be filled after each trial, asking the pleasantness of these four types of music. This study aims to investigate whether background music influences risk-taking behavior in decision-making games. Specifically, we hypothesize that fast-negative music (anger) may induce betrayal, while slow-positive music (calm) may promote cooperation. The study uses a repeating, decision-making game with varying background music. Participants will either have to choose "cooperate" or "betray" in rounds of games, playing with an opponent. Because the game is a process repeating themselves, it involves the Folk Theoreom, where players know this game is going to play for more than once, they will more likely to choose "cooperate" even though they have the chance to betray, because betrayal could lead to a different outcome in the future. Participants' choices will be recorded and analyzed alongside self-reported mood responses to determine if music affects strategic decision-making. This study contributes to understanding how auditory stimuli impact emotions and subsequent social behaviours, with potential applications in psychology and game theory. 
+> Arousal and valence are crucial factors in defining emotions in music. Modality in music often accociate with valence, where minor often leads to negative energy and major often leads to positive energy. However, this does not apply to all cultures, as some region might have a opposing effect on valence. Therefore we suspect valence would have less impact than arousal. Arousal, different than valence, is a universal factor that shows a greater emotional convergence (Stevens et al., 2009). Tempo in music brings different levels of arousal (dowsy or awake) to people. We found that previous study has shown that faster music tempi elicited faster subsequent choice reaction time (CRT) performance (Bishop et al., 2009). Therefore, we are curious about how tempo and/or valence might have an effect on performances when it comes to making decisions. Previous study done by Krahé and Bieneck (2012) has shown that pleasant music will induce postive mood, therefore reducing anger and less agrressive behaviours. In this study, we will introduce fast-positive (excitement), fast-negative (anger), slow-positive (calm), and slow-negative (sad) music. A questionnaire will be filled after each trial, asking the pleasantness of these four types of music. This study aims to investigate whether background music influences risk-taking behavior in decision-making games. Specifically, we hypothesize that fast-negative music (anger) may induce betrayal, while slow-positive music (calm) may promote cooperation. The study uses a repeating, decision-making game with varying background music. Participants will either have to choose "cooperate" or "betray" in rounds of games, playing with an opponent. Because the game is a process repeating themselves, it involves the Folk Theoreom, where players know this game is going to play for more than once, they will more likely to choose "cooperate" even though they have the chance to betray, because betrayal could lead to a different outcome in the future. Participants' choices will be recorded and analyzed alongside self-reported mood responses to determine if music affects strategic decision-making. This study contributes to understanding how auditory stimuli impact emotions and subsequent social behaviours, with potential applications in psychology and game theory. 
 
 ## 4. Hypotheses 
 
->(Directional) If background music's tempo affects reaction time, then faster tempo will lead to shorter mean reaction times during the risk-taking task.
+> (Directional) If background music's tempo affects reaction time, then faster tempo will lead to shorter mean reaction times during the risk-taking task.
 
->(Directional) If background music's tempo affects decision-making, then a faster tempo will result in participants choosing "betray" more often than "cooperate" in the risk-taking task.
+> (Directional) If background music's tempo affects decision-making, then a faster tempo will result in participants choosing "betray" more often than "cooperate" in the risk-taking task.
 
->(Directional) If background music's modality (valence/energy level) affects reaction time, then negatively energized music (e.g., fast-negative or slow-negative) will lead to shorter mean reaction times during the risk-taking task.
+> (Directional) If background music's modality (valence/energy level) affects reaction time, then negatively energized music (e.g., fast-negative or slow-negative) will lead to shorter mean reaction times during the risk-taking task.
 
->(Directional) If background music's modality (valence/energy level) affects decision-making, then negatively energized music will lead to participants choosing "betray" more often than "cooperate" in the risk-taking task.
+> (Directional) If background music's modality (valence/energy level) affects decision-making, then negatively energized music will lead to participants choosing "betray" more often than "cooperate" in the risk-taking task.
 
 # Design Plan 
 
@@ -177,16 +176,11 @@ Demographic assessments will include age, gender, region etc.
 
 ## 18. Indices 
 
-> If any measurements are going to be combined into an index (or even a mean), what measures will you use and how will they be combined? Include either a formula or a precise description of your method. If your are using a more complicated statistical method to combine measures (e.g. a factor analysis), you can note that here but describe the exact method in the analysis plan section.
->
-> -   Example: We will take the mean of the two questions above to create a single measure of 'brownie enjoyment.'
->
 > Questionnaire measures:
 For pleasantness, we will take the mean of pleasantness ratings across all four music conditions (fast-positive, fast-negative, slow-positive, slow-negative).
 For mood, We will have a Mood Index that combines the positive and negative affect scores from the PANAS (Positive and Negative Affect Schedule) to create a single measure of overall mood before and after the task.
 Positive Mood Subscore (P): The sum of ratings for positive emotions (e.g., excited, happy, etc.).
 Negative Mood Subscore (N): The sum of ratings for negative emotions (e.g., angry, sad, etc.).
-
 
 # Analysis Plan 
 
@@ -232,6 +226,8 @@ fast tempo will be coded as 0, slow tempo will be coded as 1.
 > **(Optional)** If there is any additional information that you feel needs to be included in your preregistration, please enter it here. 
 
 # References
+Bishop, D. T., Karageorghis, C. I., & Kinrade, N. P. (2009). Effects of Musically-Induced Emotions on Choice Reaction Time Performance. The Sport Psychologist, 23(1), 59–76. https://doi.org/10.1123/tsp.23.1.59
+
 Ferwerda, B., Tkalcic, M., & Schedl, M. (2017). Personality Traits and Music Genres: What Do People Prefer to Listen To? Adaptation and Personalization, 285–288. Association for Computing Machinery. https://doi.org/10.1145/3079628.3079693
 
 Flannery, M. B., & Woolhouse, M. H. (2021). Musical preference: Role of personality and music-related acoustic features. Music & Science, 4. https://doi.org/10.1177/20592043211014014
