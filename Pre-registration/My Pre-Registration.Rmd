@@ -164,7 +164,7 @@ Recruitment Period: within 1-2 months
 > We manipulated the speed of tempo by dividing them into fast and slow in two levels: music with a tempo greater than 120 beats per minute (BPM) is considered a fast tempo, designed to evoke a high-energy, excited state (e.g., fast-paced rock or electronic music). Music with a tempo less than 60 BPM is considered a slow tempo, designed to evoke a calm or drowsy state (e.g., slow classical or ambient music). We also manipulated the energy of music by positivity by introducing two levels: Music that evokes a positive emotional response, such as happiness, excitement, or calmness is positively valenced. Music that evokes a negative emotional response, such as anger, sadness, or tension is negatively valenced. 
 
 ## 17. Measured variables 
-
+> BE SPECIFIC ABOUT THIS (LIST OUT QUESTIONS)
 > Outcome measures:
 Mean reaction time will be measured in milliseconds (ms) from the moment a decision prompt appears to when the participant selects their response (either "cooperate" or "betray").  Decision outcome will require participants to choose between two options in each round of the decision-making task: "cooperate" or "betray" under the four conditions. 
 

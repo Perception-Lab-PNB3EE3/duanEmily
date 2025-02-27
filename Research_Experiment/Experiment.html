@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My experiment</title>
+    <script src="jspsych/jspsych.js"></script>
+    <script src="jspsych/plugin-html-keyboard-response.js"></script>
+    <script src="jspsych/plugin-html-button-response.js"></script>
+    <script src="jspsych/plugin-survey-html-form.js"></script>
+    <link href="jspsych/jspsych.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body></body>
+  <script>
+    var timeline = []
+
+    const jsPsych = initJsPsych();
+
+    //////////////// First Page
+    var welcome_trial = {
+    type: jsPsychHtmlButtonResponse,
+    stimulus: '<p style="font-size:24px; color:red;">Welcome to the study!</p>',
+    choices: ['Continue'],
+    };
+    timeline.push(welcome_trial)
+
+    //////////////// Second Page
+    var instructions = {
+      type: jsPsychHtmlButtonResponse,
+      stimulus: 
+       `<p>In this experiment, a shape will appear in the center 
+        of the screen.</p>
+        <p>If the shape is <strong>blue</strong>, 
+        press the letter F on the keyboard as fast as you can.</p>
+        <p>If the shape is <strong>orange</strong>, press the letter J 
+        as fast as you can.</p>
+        <div style='width: 700px;'>
+        <div style='float: left;'><img src='img/bluesquare.png'></img>
+        <p class='small'><strong>Press the F key</strong></p></div>
+        <div style='float: right;'><img src='img/orangecircle.png'></img>
+        <p class='small'><strong>Press the J key</strong></p></div>
+        </div>
+        <p>Press any key to begin.</p>
+      `,
+      choices: ['Continue']
+    };
+    timeline.push(instructions);
+   
+    //////////////// Third Page
+    var consent_form = {
+    type: jsPsychSurveyHtmlForm,
+    preamble: 'Consent Form',
+    html: `
+        <div style="height: 400px; width:800px; margin-top: 20px; overflow-y: auto; border: 5px solid #ccc; padding: 10px; background: #f9f9f9;">
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sagittis fermentum augue
+            in pharetra. Sed sit amet massa neque. Mauris sit amet efficitur lacus. 
+            Suspendisse at magna ullamcorper, aliquam dolor et, blandit tortor. 
+            Praesent risus purus, venenatis ut neque non, accumsan aliquam diam. 
+            Donec ultrices lectus vel porta accumsan. Nunc sed vestibulum massa, 
+            vel vulputate ligula. Quisque pulvinar vel magna scelerisque placerat. 
+            Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. 
+            Etiam dictum massa sapien, at auctor ligula mattis vel. 
+            Vestibulum a lacus nec magna tincidunt suscipit at in leo. 
+            Ut non ligula at orci ullamcorper lobortis nec at sem. In hac habitasse platea dictumst. 
+            Duis posuere magna libero, vel sollicitudin odio mollis nec. 
+            In in metus ac massa rutrum sollicitudin. Cras mauris ligula, viverra eu mauris ac,
+            consectetur sodales erat. Nullam non vestibulum augue. 
+            Morbi ac enim ac justo ornare pulvinar in ac velit. Vivamus mi massa,
+            luctus ut neque vel, ullamcorper finibus est. Aenean rhoncus tincidunt lectus,
+            non aliquet nulla dignissim at. Quisque leo libero, tincidunt ullamcorper euismod in, iaculis a elit.
+            Aenean mattis mi nec dignissim iaculis.</p>
+            <p>More consent details...</p>
+            <p>Additional information...</p>
+        </div>
+        <br>
+        <input type="checkbox" id="consent_checkbox" name="consent" required /> I agree to the conditions
+        `
+        };
+    timeline.push(consent_form);
+
+    jsPsych.run([timeline]);
+
+  </script>
+</html>
