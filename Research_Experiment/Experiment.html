@@ -6,32 +6,53 @@
     <script src="jspsych/plugin-html-keyboard-response.js"></script>
     <script src="jspsych/plugin-html-button-response.js"></script>
     <script src="jspsych/plugin-survey-html-form.js"></script>
-    <link href="jspsych/jspsych.css" rel="stylesheet" type="text/css" />
+    <script src="jspsych/plugin-survey-likert.js"></script>
+    <link href="jspsych/jspsych.css" rel="stylesheet" type="text/css" /> 
   </head>
   <body></body>
   <script>
-    var timeline = []
 
-    const jsPsych = initJsPsych();
+    var timeline = [];
 
-    //////////////// First Page
+    var playerGold = 0;
+    var opponentGold = 0;
+    var lastPlayerChoice = null; // Store player's last choice for opponent behaviour
+    var betrayCount = 0; // Initialize the betray count variable
+
+    var jsPsych = initJsPsych();  
+
+    // First Page
     var welcome_trial = {
-    type: jsPsychHtmlButtonResponse,
-    stimulus: '<p style="font-size:24px; color:red;">Welcome to the study!</p>',
-    choices: ['Continue'],
+      type: jsPsychHtmlButtonResponse,
+      stimulus: '<p style="font-size:24px; color:red;">Welcome to the study!</p>',
+      choices: ['Continue'],
     };
-    timeline.push(welcome_trial)
+    timeline.push(welcome_trial);
 
-    //////////////// Second Page
+    // Consent Form
+    var consent_form = {
+      type: jsPsychSurveyHtmlForm,
+      preamble: 'Consent Form',
+      html: `
+        <div style="height: 400px; width:800px; margin-top: 20px; overflow-y: auto; border: 5px solid #ccc; padding: 10px; background: #f9f9f9;">
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sagittis fermentum augue
+            in pharetra. Sed sit amet massa neque. Mauris sit amet efficitur lacus.</p>
+            <p>More consent details...</p>
+            <p>Additional information...</p>
+        </div>
+        <br>
+        <input type="checkbox" id="consent_checkbox" name="consent" required /> I agree to the conditions
+        `
+    };
+    timeline.push(consent_form);
+    
+    // Instructions
     var instructions = {
       type: jsPsychHtmlButtonResponse,
       stimulus: 
-       `<p>In this experiment, a shape will appear in the center 
-        of the screen.</p>
-        <p>If the shape is <strong>blue</strong>, 
-        press the letter F on the keyboard as fast as you can.</p>
-        <p>If the shape is <strong>orange</strong>, press the letter J 
-        as fast as you can.</p>
+       `<p>In this experiment, a shape will appear in the center of the screen.</p>
+        <p>If the shape is <strong>blue</strong>, press the letter F on the keyboard as fast as you can.</p>
+        <p>If the shape is <strong>orange</strong>, press the letter J as fast as you can.</p>
         <div style='width: 700px;'>
         <div style='float: left;'><img src='img/bluesquare.png'></img>
         <p class='small'><strong>Press the F key</strong></p></div>
@@ -43,40 +64,217 @@
       choices: ['Continue']
     };
     timeline.push(instructions);
-   
-    //////////////// Third Page
-    var consent_form = {
-    type: jsPsychSurveyHtmlForm,
-    preamble: 'Consent Form',
-    html: `
-        <div style="height: 400px; width:800px; margin-top: 20px; overflow-y: auto; border: 5px solid #ccc; padding: 10px; background: #f9f9f9;">
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sagittis fermentum augue
-            in pharetra. Sed sit amet massa neque. Mauris sit amet efficitur lacus. 
-            Suspendisse at magna ullamcorper, aliquam dolor et, blandit tortor. 
-            Praesent risus purus, venenatis ut neque non, accumsan aliquam diam. 
-            Donec ultrices lectus vel porta accumsan. Nunc sed vestibulum massa, 
-            vel vulputate ligula. Quisque pulvinar vel magna scelerisque placerat. 
-            Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. 
-            Etiam dictum massa sapien, at auctor ligula mattis vel. 
-            Vestibulum a lacus nec magna tincidunt suscipit at in leo. 
-            Ut non ligula at orci ullamcorper lobortis nec at sem. In hac habitasse platea dictumst. 
-            Duis posuere magna libero, vel sollicitudin odio mollis nec. 
-            In in metus ac massa rutrum sollicitudin. Cras mauris ligula, viverra eu mauris ac,
-            consectetur sodales erat. Nullam non vestibulum augue. 
-            Morbi ac enim ac justo ornare pulvinar in ac velit. Vivamus mi massa,
-            luctus ut neque vel, ullamcorper finibus est. Aenean rhoncus tincidunt lectus,
-            non aliquet nulla dignissim at. Quisque leo libero, tincidunt ullamcorper euismod in, iaculis a elit.
-            Aenean mattis mi nec dignissim iaculis.</p>
-            <p>More consent details...</p>
-            <p>Additional information...</p>
-        </div>
-        <br>
-        <input type="checkbox" id="consent_checkbox" name="consent" required /> I agree to the conditions
-        `
-        };
-    timeline.push(consent_form);
 
-    jsPsych.run([timeline]);
+    // Music Conditions
+    var musicConditions = ["excited", "angry", "calm", "sad"];
+    var assignedCondition = jsPsych.randomization.sampleWithoutReplacement(musicConditions, 1)[0];
 
+    // Replace with actual MP3 file URLs
+    var musicFiles = {
+      "excited": "music/excited_music.mp3",
+      "angry": "music/angry_music.mp3",
+      "calm": "music/calm_music.mp3",
+      "sad": "music/sad_music.mp3"
+    };
+
+    function startBackgroundMusic() {
+      if (assignedCondition) {
+        backgroundMusic = new Audio(musicFiles[assignedCondition]);
+        backgroundMusic.loop = true;
+        backgroundMusic.play();
+      }
+    }
+
+    function stopBackgroundMusic() {
+      if (backgroundMusic) {
+        backgroundMusic.pause();
+        backgroundMusic.currentTime = 0;
+      }
+    }
+    
+    // Start Trial Confirmation
+    var startMusicTrial = {
+      type: jsPsychHtmlButtonResponse,
+      stimulus: '<p>Click to start the experiment.</p>',
+      choices: ['Start'],
+      on_finish: function() {
+        startBackgroundMusic();
+      }
+    };
+    timeline.push(startMusicTrial);
+
+    // Function to determine opponent's move (Tit-for-Tat strategy)
+    function getOpponentChoice() {
+      return lastPlayerChoice === 1 ? 1 : 0; // Copies the player's last move (cooperate = 0, betray = 1)
+    }
+
+    function playRound() {
+      if (playerGold >= 10 || opponentGold >= 10) {
+        timeline.push({
+          type: jsPsychHtmlButtonResponse,
+          stimulus: `<p>Game Over! ${playerGold >= 10 ? "You win!" : "Opponent wins!"}</p>`,
+          choices: ["Continue"],
+            on_finish: function () {
+            playerGold = 0;
+            opponentGold = 0;
+            lastPlayerChoice = null;
+            betrayCount = 0;
+            stopBackgroundMusic();
+            endGameSurvey();
+                    }
+                });
+                return;
+        }
+      var musicTrial = {
+          type: jsPsychHtmlButtonResponse,
+          stimulus: `<p>You: ${playerGold} gold | Opponent: ${opponentGold} gold</p>
+          <p>Do you cooperate or betray?</p>`,
+          choices: ["Cooperate", "Betray"],
+          response_allowed_while_playing: true,
+          on_finish: processChoice
+                };
+                timeline.push(musicTrial);
+          
+          function processChoice(data) {
+              jsPsych.data.addDataToLastTrial({
+                    music_condition: assignedCondition,
+                    player_choice: playerChoice === 0 ? "cooperate" : "betray",
+                    opponent_choice: opponentChoice === 0 ? "cooperate" : "betray",
+                    decision_time: decisionTime,
+                    betray_frequency: betrayCount,
+                    player_gold: playerGold,
+                    opponent_gold: opponentGold
+                    });
+                    
+                    var playerChoice = data.response;
+                    var decisionTime = data.rt;
+                    var opponentChoice = getOpponentChoice();
+                    lastPlayerChoice = playerChoice;
+
+                    if (playerChoice === 1) {
+                      betrayCount += 1;
+                    }
+
+                    if (playerChoice === 0 && opponentChoice === 0) {
+                      playerGold += 1;
+                      opponentGold += 1;
+                    } else if (playerChoice === 0 && opponentChoice === 1) {
+                      opponentGold += 2;
+                    } else if (playerChoice === 1 && opponentChoice === 0) {
+                      playerGold += 2;
+                    }
+
+                    timeline.push({
+                      type: jsPsychHtmlButtonResponse,
+                      stimulus: `<p>You chose ${playerChoice === 0 ? "Cooperate" : "Betray"}.</p>
+                                <p>Opponent chose ${opponentChoice === 0 ? "Cooperate" : "Betray"}.</p>
+                                <p>You: ${playerGold} gold | Opponent: ${opponentGold} gold</p>`,
+                      choices: ["Next Round"],
+                      on_finish: playRound
+                    });
+                  }
+    }
+    playRound();
+
+// Likert scale for pleasantness of the game
+    var pleasantnessSurvey = {
+        type: jsPsychSurveyLikert,
+        preamble: "<p>How pleasant did you find this piece?</p>",
+        questions: [
+            {prompt: "How pleasant did you find this piece?",
+                labels: ["1 - Very unpleasant", "2", "3", "4", "5", "6", "7 - Very pleasant"],
+                required: true}
+        ],
+    };
+
+// Emotion questionnaire
+    var emotionSurvey = {
+        type: jsPsychSurveyLikert,
+        preamble: "<p>To what extent did you experience the following emotions while listening to the background music?</p>",
+        questions: [
+            {prompt: "Excited", labels: ["1 - Not at all", "2", "3", "4", "5 - Very much"], required: true},
+            {prompt: "Determined", labels: ["1 - Not at all", "2", "3", "4", "5 - Very much"], required: true},
+            {prompt: "Strong", labels: ["1 - Not at all", "2", "3", "4", "5 - Very much"], required: true},
+            {prompt: "Alert", labels: ["1 - Not at all", "2", "3", "4", "5 - Very much"], required: true},
+            {prompt: "Hostile", labels: ["1 - Not at all", "2", "3", "4", "5 - Very much"], required: true},
+            {prompt: "Distressed", labels: ["1 - Not at all", "2", "3", "4", "5 - Very much"], required: true},
+            {prompt: "Nervous", labels: ["1 - Not at all", "2", "3", "4", "5 - Very much"], required: true},
+            {prompt: "Guilty", labels: ["1 - Not at all", "2", "3", "4", "5 - Very much"], required: true}
+        ],
+    };
+
+// Demographic questions
+    var demographicSurvey = {
+        type: jsPsychSurveyHtmlForm,
+        preamble: "<p>Please answer the following demographic questions:</p>",
+        html: `
+            <label for="age">What is your age?</label>
+            <input type="number" id="age" name="age" required>
+            <br><br>
+            
+            <label>How do you identify?</label>
+            <select id="gender" name="gender" required>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Non-binary">Non-binary / Third gender</option>
+                <option value="Prefer not to say">Prefer not to say</option>
+            </select>
+            <br><br>
+
+            <label for="region">Which region are you currently living in?</label>
+            <input type="text" id="region" name="region" required>
+            <br><br>
+
+            <label>Do you have formal musical training?</label>
+            <select id="training" name="training" required>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+            <br><br>
+
+            <label>How often do you listen to music?</label>
+            <select id="music_frequency" name="music_frequency" required>
+                <option value="Rarely">Rarely</option>
+                <option value="Occasionally">Occasionally</option>
+                <option value="Frequently">Frequently</option>
+                <option value="Daily">Daily</option>
+            </select>
+        `,
+      };
+
+// Final message after the survey
+    var thankYouTrial = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: "<p>Thank you for your participation!</p>",
+        choices: ["Finish"]
+    };
+
+    function endGameSurvey() {
+    stopBackgroundMusic();
+
+    // Get all recorded reaction times
+    var reactionTimes = jsPsych.data.get().filter({player_choice: ["cooperate", "betray"]}).select("decision_time").values;
+
+    // Compute the mean reaction time
+    var meanRT = reactionTimes.length > 0 
+        ? reactionTimes.reduce((sum, rt) => sum + rt, 0) / reactionTimes.length 
+        : 0;
+
+    // Store the computed mean RT in jsPsych data
+    jsPsych.data.addProperties({ mean_reaction_time: meanRT });
+
+    console.log("Mean Reaction Time:", meanRT); // Debugging (optional)
+
+    var surveyTimeline = [
+        pleasantnessSurvey,
+        emotionSurvey,
+        demographicSurvey,
+        thankYouTrial
+    ];
+
+    jsPsych.run(surveyTimeline); // Run only the survey after the game
+}
+
+    jsPsych.run(timeline);
   </script>
 </html>
