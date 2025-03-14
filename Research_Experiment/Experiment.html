@@ -1,13 +1,24 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>My experiment</title>
+    <title>Decision-making games</title>
     <script src="jspsych/jspsych.js"></script>
     <script src="jspsych/plugin-html-keyboard-response.js"></script>
     <script src="jspsych/plugin-html-button-response.js"></script>
     <script src="jspsych/plugin-survey-html-form.js"></script>
     <script src="jspsych/plugin-survey-likert.js"></script>
     <link href="jspsych/jspsych.css" rel="stylesheet" type="text/css" /> 
+    <style>
+              /* Adjust the preamble text */
+        .jspsych-survey-likert{
+            text-align: center;
+            height: 30vh;
+        }
+        .jspsych-survey-html-form:nth-of-type(3) {
+            text-align: center;
+            height: 30vh;
+        }
+    </style>
   </head>
   <body></body>
   <script>
@@ -36,10 +47,17 @@
       preamble: 'Consent Form',
       html: `
         <div style="height: 400px; width:800px; margin-top: 20px; overflow-y: auto; border: 5px solid #ccc; padding: 10px; background: #f9f9f9;">
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sagittis fermentum augue
-            in pharetra. Sed sit amet massa neque. Mauris sit amet efficitur lacus.</p>
-            <p>More consent details...</p>
-            <p>Additional information...</p>
+            <p>You are invited to participate in a research study that examines decision-making in an interactive task. 
+              Your participation will help us understand how different factors influence choices in a strategic setting.</p>
+            <p>There are no known risks associated with participation.</p>
+            <p>Your participation is entirely voluntary. You may withdraw at any time without penalty, and your data will not be used if you choose to exit before completion.
+              All responses will be anonymized and used for research purposes only. No identifying information will be collected.</p>
+            <p>By clicking “I Agree” below, you confirm that:</p>
+            <ol>
+              <li>You are at least 18 years old.</li>
+              <li>You have read and understood the study information.</li>
+              <li>You voluntarily agree to participate.</li>
+            </ol>
         </div>
         <br>
         <input type="checkbox" id="consent_checkbox" name="consent" required /> I agree to the conditions
@@ -51,17 +69,17 @@
     var instructions = {
       type: jsPsychHtmlButtonResponse,
       stimulus: 
-       `<p>In this experiment, a shape will appear in the center of the screen.</p>
-        <p>If the shape is <strong>blue</strong>, press the letter F on the keyboard as fast as you can.</p>
-        <p>If the shape is <strong>orange</strong>, press the letter J as fast as you can.</p>
-        <div style='width: 700px;'>
-        <div style='float: left;'><img src='img/bluesquare.png'></img>
-        <p class='small'><strong>Press the F key</strong></p></div>
-        <div style='float: right;'><img src='img/orangecircle.png'></img>
-        <p class='small'><strong>Press the J key</strong></p></div>
-        </div>
-        <p>Press any key to begin.</p>
-      `,
+       `<p>In this study, you will play multiple rounds of a decision-making game where you choose between two options:</p>
+        <p><span style="color: green;"><b>“cooperate”</span></b> or <span style="color: red;"><b>“betray”.</span></b></p>  
+        <p>You will be paired with an opponent, and your goal is to <u>reach 10 Gold before they do.</u></p>  
+        <p>The outcomes of each round are as follows:</p> 
+        <ol style="background-color: #f9f9f9; padding: 20px 30px; border: 5px solid #ccc; border-radius: 5px;">
+            <li style="margin-left: 10px;">If you choose “cooperate” and your opponent chooses “betray,” you earn <b>0 Gold</b>, and your opponent earns <b>2 Gold.</b></li>
+            <li style="margin-left: 10px;">If you choose “betray” and your opponent chooses “cooperate,” you earn <b>2 Gold</b>, and your opponent earns <b>0 Gold.</b></li>  
+            <li style="margin-left: 10px;">If both choose “cooperate,” <span style="color: green;"><b>each player earns 1 Gold.</b></span></li>
+            <li style="margin-left: 10px;">If both choose “betray,” <span style="color: red;"><b>neither player earns any Gold.</b></span></li>
+        </ol>
+        `,
       choices: ['Continue']
     };
     timeline.push(instructions);
@@ -96,7 +114,13 @@
     // Start Trial Confirmation
     var startMusicTrial = {
       type: jsPsychHtmlButtonResponse,
-      stimulus: '<p>Click to start the experiment.</p>',
+      stimulus: `
+      <p>During the game, background audio will play. <b>Please wear headphones or ensure your audio is on.</b></p>
+      <p>After the game, you will answer a short questionnaire about your experience.</p>
+      <p><u>There are no right or wrong answers—please respond naturally.</u></p>
+      <p>The game consists of multiple rounds, so consider how your decisions might affect future interactions.</p>
+      <p>Your responses will remain anonymous, and your data will be used for research purposes only.</p>
+      <p>Whenever you're ready, feel free to click "start" to start the game.</p>`,
       choices: ['Start'],
       on_finish: function() {
         startBackgroundMusic();
@@ -109,9 +133,10 @@
       totalRounds++;
       var rand = Math.random(); // Random number between 0 and 1
       var betrayRate = betrayCount / totalRounds;
-
-      if (rand < 0.1) {
-        return 0; // 10% chance to cooperate regardless of other conditions
+      
+      // EZ mode!
+      if (rand < 0.15) {
+        return 0; // 15% chance to cooperate regardless of other conditions
       }
       if (opponentGold >= 8) {
         return 1; // Always betray if close to winning
@@ -154,18 +179,7 @@
                 timeline.push(musicTrial);
           
           function processChoice(data) {
-              jsPsych.data.addDataToLastTrial({
-                    music_condition: assignedCondition,
-                    player_choice: playerChoice === 0 ? "cooperate" : "betray",
-                    opponent_choice: opponentChoice === 0 ? "cooperate" : "betray",
-                    decision_time: decisionTime,
-                    betray_frequency: betrayCount,
-                    player_gold: playerGold,
-                    opponent_gold: opponentGold
-                    });
-                    
                     var playerChoice = data.response;
-                    var decisionTime = data.rt;
                     var opponentChoice = getOpponentChoice();
                     lastPlayerChoice = playerChoice;
 
@@ -182,6 +196,15 @@
                       playerGold += 2;
                     }
 
+                    jsPsych.data.addDataToLastTrial({
+                    music_condition: assignedCondition,
+                    player_choice: playerChoice === 0 ? "cooperate" : "betray",
+                    opponent_choice: opponentChoice === 0 ? "cooperate" : "betray",
+                    betray_frequency: betrayCount,
+                    player_gold: playerGold,
+                    opponent_gold: opponentGold
+                    });
+
                     timeline.push({
                       type: jsPsychHtmlButtonResponse,
                       stimulus: `<p>You chose ${playerChoice === 0 ? "Cooperate" : "Betray"}.</p>
@@ -197,11 +220,10 @@
 // Likert scale for pleasantness of the game
     var pleasantnessSurvey = {
         type: jsPsychSurveyLikert,
-        preamble: "<p>How pleasant did you find this piece?</p>",
+        preamble: "<p>Please answer the following question honestly.</p>",
         questions: [
-            {prompt: "How pleasant did you find this piece?",
-                labels: ["1 - Very unpleasant", "2", "3", "4", "5", "6", "7 - Very pleasant"],
-                required: true}
+            {prompt: "How pleasant did you find this piece?", 
+            labels: ["1 - Very unpleasant", "2", "3", "4", "5", "6", "7 - Very pleasant"], required: true},
         ],
     };
 
@@ -219,7 +241,24 @@
             {prompt: "Nervous", labels: ["1 - Not at all", "2", "3", "4", "5 - Very much"], required: true},
             {prompt: "Guilty", labels: ["1 - Not at all", "2", "3", "4", "5 - Very much"], required: true}
         ],
-    };
+        on_finish: function(data) {
+        var positiveEmotions = ["Q0", "Q1", "Q2", "Q3"]; // Excited, Determined, Strong, Alert
+        var negativeEmotions = ["Q4", "Q5", "Q6", "Q7"]; // Hostile, Distressed, Nervous, Guilty
+        var playerchoice = data.response;
+
+        // Extract scores based on question order
+        var positiveScore = (playerchoice.Q0 + playerchoice.Q1 + playerchoice.Q2 + playerchoice.Q3) / 4; // Average of Excited, Determined, Strong, Alert
+        var negativeScore = (playerchoice.Q4 + playerchoice.Q5 + playerchoice.Q6 + playerchoice.Q7) / 4; // Average of Hostile, Distressed, Nervous, Guilty
+
+        // Save to CSV
+        jsPsych.data.addDataToLastTrial({
+            positive_emotion_score: positiveScore,
+            negative_emotion_score: negativeScore
+        });
+
+        console.log("Positive Score:", positiveScore, "Negative Score:", negativeScore); // Debugging
+    }
+};
 
 // Demographic questions
     var demographicSurvey = {
@@ -229,7 +268,6 @@
             <label for="age">What is your age?</label>
             <input type="number" id="age" name="age" required>
             <br><br>
-            
             <label>How do you identify?</label>
             <select id="gender" name="gender" required>
                 <option value="Male">Male</option>
@@ -239,8 +277,8 @@
             </select>
             <br><br>
 
-            <label for="region">Which region are you currently living in?</label>
-            <input type="text" id="region" name="region" required>
+            <label for="country">Which country are you from?</label>
+            <input type="text" id="country" name="country" required>
             <br><br>
 
             <label>Do you have formal musical training?</label>
@@ -264,7 +302,11 @@
     var thankYouTrial = {
         type: jsPsychHtmlButtonResponse,
         stimulus: "<p>Thank you for your participation!</p>",
-        choices: ["Finish"]
+        choices: ["Finish"],
+          on_finish: function(data) {
+          jsPsych.data.get().localSave('csv', 'trust_game_results.csv'); // Save CSV
+          data.message = "CSV saved";
+        }
     };
 
     function endGameSurvey() {
@@ -294,5 +336,7 @@
 }
 
     jsPsych.run(timeline);
+
+
   </script>
 </html>
