@@ -9,7 +9,7 @@
     <script src="jspsych/plugin-survey-likert.js"></script>
     <link href="jspsych/jspsych.css" rel="stylesheet" type="text/css" /> 
     <style>
-              /* Adjust the preamble text */
+        /* Adjust the preamble text */
         .jspsych-survey-likert{
             text-align: center;
             height: 30vh;
@@ -296,18 +296,13 @@
                 <option value="Daily">Daily</option>
             </select>
         `,
-      };
-
-// Final message after the survey
-    var thankYouTrial = {
-        type: jsPsychHtmlButtonResponse,
-        stimulus: "<p>Thank you for your participation!</p>",
-        choices: ["Finish"],
-          on_finish: function(data) {
+        on_finish: function(data) {
           jsPsych.data.get().localSave('csv', 'trust_game_results.csv'); // Save CSV
           data.message = "CSV saved";
         }
-    };
+      };
+
+
 
     function endGameSurvey() {
     stopBackgroundMusic();
@@ -329,7 +324,6 @@
         pleasantnessSurvey,
         emotionSurvey,
         demographicSurvey,
-        thankYouTrial
     ];
 
     jsPsych.run(surveyTimeline); // Run only the survey after the game

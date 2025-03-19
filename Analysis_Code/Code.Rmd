@@ -1,0 +1,90 @@
+---
+title: "Code"
+output: html_document
+date: "2025-03-19"
+---
+## Settings
+```{r, load-packages}
+# Load required packages
+library(ggplot2)
+library(readr)
+
+# Simulating data
+
+# Example of one population
+sampleSizeRequired = 200 # participants
+
+# Example with 3 subpopulations
+nGroups = 3
+nSubsGroup = 60
+
+# Conditions
+nConds = 4
+conLabels = c("Excited, Angry, Calm, Sad")
+
+# Outcome measures
+# reactions time, likert responses
+
+# Think through df
+# rows = participants
+# columns = condition(s), DVs, demographics
+
+simulatedData = data.frame()
+
+```
+
+## Explore the data
+# df = dataframe
+```{r}
+# print head
+Head(df)
+
+# formatting / cleaning
+
+# conversion of data types if necessary
+summary(df)
+
+# remove data according to exclusion criteria
+
+
+```
+
+Exploration
+```{r}
+# get summary / descriptive stats
+
+# check variable distributions (plot histograms)
+
+# check correlations between variables
+
+# scatterplots between 2 variables
+```
+
+## Report demographic statistics
+```{r}
+# Calculate gender distribution
+
+# Calculate mean and std age
+
+# Home country
+
+# Music experience
+
+# Listening habits
+```
+
+## Planned inferential stats
+```{r}
+anova(df, variable)
+
+# DV ~ IV + IV = ???
+```
+
+## Planned visualization
+```{r}
+
+# bar plot (with error bars)
+# error = sem
+# point estimates
+# linear regressions
+```
