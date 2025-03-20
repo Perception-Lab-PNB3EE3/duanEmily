@@ -12,7 +12,8 @@ library(readr)
 # Simulating data
 
 # Example of one population
-sampleSizeRequired = 200 # participants
+sampleSizeRequired = 200
+
 
 # Example with 3 subpopulations
 nGroups = 3
@@ -29,7 +30,20 @@ conLabels = c("Excited, Angry, Calm, Sad")
 # rows = participants
 # columns = condition(s), DVs, demographics
 
-simulatedData = data.frame()
+# rep = repetition
+
+df <- data.frame(Participant=rep(0, sampleSizeRequired),
+                 Backgound=rep("NA", sampleSizeRequired),
+                 Condition=rep("NA", sampleSizeRequired),
+                 ReactionTime=rep("NA", sampleSizeRequired),
+                 BetrayalChoices=rep(0, sampleSizeRequired),
+                 stringsAsFactors=TRUE)
+
+df$Participant <- seq(1, sampleSizeRequired)
+
+# assign half of participants randomly to a condition
+df$Condition <- sample(conLabels, sampleSizeRequired, replace = TRUE)
+View(df)
 
 ```
 
