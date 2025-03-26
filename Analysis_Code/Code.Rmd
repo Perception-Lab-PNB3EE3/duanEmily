@@ -25,7 +25,7 @@ library(ggsignif)
 # Simulating data
 
 # Example of one population
-sampleSizeRequired = 200 # participants
+sampleSizeRequired = 200 # number of participants
 
 # Conditions
 condLabels = c("Excited", "Angry", "Calm", "Sad")
@@ -109,19 +109,24 @@ View(df)
 
 ```{r}
 
-# conversion of data types if necessary
+# Check what we have
 summary(df)
 
+# Group condition and betrayal choices together, and see differences in RT
 df_rt_summary_by_betrayalchoices_cond <- df %>%
 group_by(Condition, BetrayalChoices) %>% #what vars you want to group by
 summarise(
-    mean_RT = mean(ReactionTime, na.rm = TRUE),
-    median_RT = median(ReactionTime, na.rm = TRUE),
-    sd_RT = sd(ReactionTime, na.rm = TRUE),
-    min_RT = min(ReactionTime, na.rm = TRUE),
-    max_RT = max(ReactionTime, na.rm = TRUE),
+    mean_RT = mean(ReactionTime),
+    median_RT = median(ReactionTime),
+    sd_RT = sd(ReactionTime),
+    min_RT = min(ReactionTime),
+    max_RT = max(ReactionTime),
     n = n()
     )
+
+# removed any data that has NA in sd_RT
+df_rt_summary_by_betrayalchoices_cond<- na.omit(df_rt_summary_by_betrayalchoices_cond) 
+
 
 sum(is.na(df_rt_summary_by_betrayalchoices_cond$sd_RT))  # This will show how many NAs are in the ReactionTime column
 
@@ -135,77 +140,68 @@ Exploration
 # get summary / descriptive stats
 
 # check variable distributions (plot histograms)
+ggplot(df, aes(x = ReactionTime, fill = Condition)) +
+  geom_histogram(binwidth = 200, color = "black", alpha = 0.6) +
+  labs(
+    title = "Distribution of Reaction Times by Condition",
+    x = "Reaction Time (ms)",
+    y = "Count"
+  ) +
+  scale_fill_manual(values = c("Excited" = "#F8766D", 
+                               "Angry" = "#00BFC4", 
+                               "Calm" = "#7CAE00", 
+                               "Sad" = "#FF61CC")) +
+  theme_minimal()
 
 # check correlations between variables
 
 # scatterplots between 2 variables
 ```
 
-
 ## Planned inferential stats
 
+# Check Correlations
+
 ```{r}
-anova_result <- aov(ReactionTime ~ Condition * BetrayalChoices +
-Error(Participant/Condition), data = df)
-summary(anova_result)
+# Measuring Correlation between Condition and ReactionTime
+FirstDV_anova_result <- aov(ReactionTime ~ Condition, data = df)
+summary(FirstDV_anova_result)
 
-# Conditions are significantly different to each other = yes main effect, hypothesis proved
-# BetrayalChoices does not have a main effect on reaction time, no hypothesis is done on this, as it shouldn't have a main effect.
-# No interaction effect between Conditions and BetrayalChoices, hypothesis failed
+# Measuring Correlation between Condition and BetrayalChoices
+SecondDV_anova_result <- aov(BetrayalChoices ~ Condition, data = df)
+summary(SecondDV_anova_result)
 
-# The type of music does not affect people's choices, but do affect people's reaction (thinking time).
+# Conditions are significantly different in reaction time and BetrayalChoices  = yes main effect, hypotheses are proved.
 
-## post-hoc LSD
-# 1. Get LSD results (same as before)
-# Fit the ANOVA model
-model <- aov(ReactionTime ~ Condition * BetrayalChoices, data = df)
+# The type of music do affect people's choices, and also do affect people's reaction (thinking time).
 
-# Calculate estimated marginal means (emmeans)
-Condition_BetrayalChoices_means <- emmeans(model, ~ Condition * BetrayalChoices)
+```
+# Post-hoc LSD test
+```{r}
 
-# Perform post-hoc pairwise comparisons (LSD)
-lsd_results <- pairs(Condition_BetrayalChoices_means, adjust = "none")
+# Compute LSD post-hoc comparisons
+lsd_results_RT <- emmeans(FirstDV_anova_result, pairwise ~ Condition, adjust = "none")
 
-# Convert the results into a summary data frame
-lsd_summary <- as.data.frame(summary(lsd_results))
+# Print LSD test results
+print(lsd_results_RT)
 
-# View the summary results
-print(lsd_summary)
+#  Angry - Excited and Calm - Sad are not significantly different, proving the hypothesis that similar tempo music do result similarly (no significant difference between them).
 
-# 2. Prepare mean ± SE data
-plot_data <- summary(Condition_BetrayalChoices_means) |>
-  transform(
-    lower.CL = emmean - SE,
-    upper.CL = emmean + SE
-  )
+# Other comparisons that differs in tempo are all significantly different, meaning that there is a main effect of tempo on reaction time.
 
-# 3. Plot with significance bars
-ggplot(plot_data, aes(x = Condition, y = emmean, fill = BetrayalChoices)) +
-  geom_col(position = position_dodge(width = 0.8), width = 0.7) +
-  geom_errorbar(
-    aes(ymin = lower.CL, ymax = upper.CL),
-    position = position_dodge(width = 0.8),
-    width = 0.25
-  ) +
-  # Add significance bars manually for each stage
-  geom_signif(
-    y_position = max(plot_data$upper.CL) * 1.05,
-    xmin = c(0.8, 1.8, 2.8),
-    xmax = c(1.2, 2.2, 3.2),
-    annotations = ifelse(lsd_summary$p.value < 0.05, 
-                       ifelse(lsd_summary$p.value < 0.01, "**", "*"), 
-                       "ns"),
-    tip_length = 0.01
-  ) +
-  labs(
-    title = "LSD Post-Hoc Comparisons",
-    subtitle = "Error bars = ±1 SE | *p<0.05, **p<0.01, ns=not significant",
-    x = "Condition",
-    y = "Reaction Time",
-    fill = "BetrayalChoices"
-  ) +
-  scale_fill_manual(values = c("Control" = "#F8766D", "Experiment" = "#00BFC4")) +
-  theme_minimal()
+# Compute LSD post-hoc comparisons
+lsd_results_Choice <- emmeans(SecondDV_anova_result, pairwise ~ Condition, adjust = "none")
+
+# Print LSD results
+print(lsd_results_Choice)
+
+# Angry - Sad are not significantly different, proving the hypothesis that negatively valenced music do result similarly (no significant difference between them).
+
+# Calm - Excited are significantly different, although p-value is slightly higher than others, opposing the hypothesis that positively valenced music do not result less betrayal choices (significant difference between them).
+
+# Other comparisons that differs in tempo are all significantly different, meaning that there is a main effect of tempo on choices.
+
+# estimate positive > and negative <
 ```
 
 ## Planned visualization
@@ -216,17 +212,51 @@ ggplot(plot_data, aes(x = Condition, y = emmean, fill = BetrayalChoices)) +
 ggplot(df, aes(x = Condition, y = ReactionTime, fill = Condition)) +
   geom_boxplot(alpha = 0.6, outlier.shape = NA) +  
   geom_jitter(color = "black", size = 1, alpha = 0.5, width = 0.2) +  
-  scale_fill_viridis(discrete = TRUE, alpha = 0.6 ) + 
+  scale_color_manual(values = c(
+    "Excited" = rgb(248/255, 118/255, 109/255, alpha = 0.7),  # Adjust alpha here
+    "Angry" = rgb(0/255, 191/255, 196/255, alpha = 0.7), 
+    "Calm" = rgb(122/255, 174/255, 0/255, alpha = 0.7),
+    "Sad" = rgb(255/255, 97/255, 204/255, alpha = 0.7)  # Corrected color for Sad
+  )) + 
   theme_minimal() +  
   labs(title = "Reaction Time Distributed by Condition",
        x = "Types of Background Music",
        y = "Reaction Time (ms)") +
   theme(legend.position = "none")
 
-# condition matching betrayalcounts
+# condition matching betrayal counts
+ggplot(df, aes(x = Condition, y = BetrayalChoices, fill = Condition)) +
+  geom_boxplot(alpha = 0.6, outlier.shape = NA) +  
+  geom_jitter(color = "black", size = 1, alpha = 0.5, width = 0.2) +  
+  scale_color_manual(values = c(
+    "Excited" = rgb(248/255, 118/255, 109/255, alpha = 0.7),  # Adjust alpha here
+    "Angry" = rgb(0/255, 191/255, 196/255, alpha = 0.7), 
+    "Calm" = rgb(122/255, 174/255, 0/255, alpha = 0.7),
+    "Sad" = rgb(255/255, 97/255, 204/255, alpha = 0.7)  # Corrected color for Sad
+  )) + 
+  theme_minimal() +  
+  labs(title = "BetrayalChoices Distributed by Condition",
+       x = "Types of Background Music",
+       y = "BetrayalChoices") +
+  theme(legend.position = "none")
 
+# Scatter plot with conditions, betrayal choices and reaction time
+# Scatter plot with conditions, betrayal choices and reaction time
+ggplot(df, aes(x = BetrayalChoices, y = ReactionTime, color = Condition)) +
+  geom_point(alpha = 0.7, size = 3) +  # Plot points
+  geom_smooth(method = "lm", se = TRUE, aes(color = Condition), linetype = "dashed") +  # Add regression lines
+  labs(
+    title = "Scatter Plot of Reaction Time vs Betrayal Choices",
+    x = "Betrayal Choices",
+    y = "Reaction Time",
+    color = "Condition"
+  ) +
+  scale_color_manual(values = c(
+    "Excited" = rgb(248/255, 118/255, 109/255, alpha = 0.7),  # Adjust alpha here
+    "Angry" = rgb(0/255, 191/255, 196/255, alpha = 0.7), 
+    "Calm" = rgb(122/255, 174/255, 0/255, alpha = 0.7),
+    "Sad" = rgb(255/255, 97/255, 204/255, alpha = 0.7)  # Corrected color for Sad
+  )) +
+  theme_minimal()
 
-# error = sem
-# point estimates
-# linear regressions
 ```
