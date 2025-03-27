@@ -4,7 +4,7 @@ output: html_document
 date: "2025-03-19"
 ---
 
-## Settings
+# Package Settings
 
 ```{r, load-packages}
 # Load required packages
@@ -21,9 +21,9 @@ install.packages("ggsignif")
 library(ggsignif)
 ```
 
-```{r}
 # Simulating data
 
+```{r}
 # Example of one population
 sampleSizeRequired = 200 # number of participants
 
@@ -103,12 +103,9 @@ df$NegativeEmotion <- rowSums(df[, c("Hostile", "Distressed", "Nervous", "Guilty
 View(df)
 ```
 
-## Explore the data
-
-# df = dataframe
+# Explore the data
 
 ```{r}
-
 # Check what we have
 summary(df)
 
@@ -134,10 +131,9 @@ print(df_rt_summary_by_betrayalchoices_cond)
 
 ```
 
-Exploration
+## The total count of the same reaction times between conditions
 
 ```{r}
-# get summary / descriptive stats
 
 # check variable distributions (plot histograms)
 ggplot(df, aes(x = ReactionTime, fill = Condition)) +
@@ -147,20 +143,19 @@ ggplot(df, aes(x = ReactionTime, fill = Condition)) +
     x = "Reaction Time (ms)",
     y = "Count"
   ) +
-  scale_fill_manual(values = c("Excited" = "#F8766D", 
-                               "Angry" = "#00BFC4", 
-                               "Calm" = "#7CAE00", 
-                               "Sad" = "#FF61CC")) +
+  scale_color_manual(values = c(
+    "Excited" = rgb(248/255, 118/255, 109/255, alpha = 0.7),  # Adjust alpha here
+    "Angry" = rgb(0/255, 191/255, 196/255, alpha = 0.7), 
+    "Calm" = rgb(122/255, 174/255, 0/255, alpha = 0.7),
+    "Sad" = rgb(255/255, 97/255, 204/255, alpha = 0.7)  # Corrected color for Sad
+  )) +
   theme_minimal()
 
-# check correlations between variables
-
-# scatterplots between 2 variables
 ```
 
-## Planned inferential stats
+# Planned inferential stats
 
-# Check Correlations
+## Check Correlations Using One-way ANOVA
 
 ```{r}
 # Measuring Correlation between Condition and ReactionTime
@@ -176,35 +171,62 @@ summary(SecondDV_anova_result)
 # The type of music do affect people's choices, and also do affect people's reaction (thinking time).
 
 ```
-# Post-hoc LSD test
-```{r}
 
+## Post-hoc LSD Test on Reaction Times
+
+```{r}
 # Compute LSD post-hoc comparisons
 lsd_results_RT <- emmeans(FirstDV_anova_result, pairwise ~ Condition, adjust = "none")
 
 # Print LSD test results
 print(lsd_results_RT)
 
-#  Angry - Excited and Calm - Sad are not significantly different, proving the hypothesis that similar tempo music do result similarly (no significant difference between them).
+# estimate = if positive, left > right; if negative, left < right.
 
-# Other comparisons that differs in tempo are all significantly different, meaning that there is a main effect of tempo on reaction time.
+## Significant
+# Angry vs. Calm → Angry had significantly shorter reaction times
 
+# Angry vs. Sad → Angry had significantly shorter reaction times
+
+# Calm vs. Excited → Calm had significantly longer reaction times
+
+# Excited vs. Sad → Excited had significantly shorter reaction times
+
+## Not significant
+# Angry vs. Excited → No significant difference in reaction times, suggesting both "Angry" and "Excited" conditions led to similar reaction times
+
+# Calm vs. Sad → No significant difference in reaction times, suggesting both "Calm" and "Sad" conditions led to similar reaction times
+
+```
+
+## Post-hoc LSD Test on Betrayal Choices
+
+```{r}
 # Compute LSD post-hoc comparisons
 lsd_results_Choice <- emmeans(SecondDV_anova_result, pairwise ~ Condition, adjust = "none")
 
 # Print LSD results
 print(lsd_results_Choice)
 
-# Angry - Sad are not significantly different, proving the hypothesis that negatively valenced music do result similarly (no significant difference between them).
+# estimate = if positive, left > right; if negative, left < right.
 
-# Calm - Excited are significantly different, although p-value is slightly higher than others, opposing the hypothesis that positively valenced music do not result less betrayal choices (significant difference between them).
+## Significant
+# Angry vs. Calm → Angry had significantly more betrayal choices
 
-# Other comparisons that differs in tempo are all significantly different, meaning that there is a main effect of tempo on choices.
+# Angry vs. Excited → Angry had significantly more betrayal choices
 
-# estimate positive > and negative <
+# Calm vs. Excited → Calm had significantly more betrayal choices
+
+# Calm vs. Sad → Calm had significantly fewer betrayal choices
+
+# Excited vs. Sad → Excited had significantly fewer betrayal choices
+
+## Not significant
+# Angry vs. Sad → This suggests that both "Angry" and "Sad" conditions led to similar betrayal choices.
+
 ```
 
-## Planned visualization
+# Planned visualization
 
 ```{r}
 
