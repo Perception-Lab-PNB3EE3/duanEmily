@@ -32,16 +32,7 @@ condLabels = c("Excited", "Angry", "Calm", "Sad")
 condPerParticipant = 1
 # The pre-registeration said it is a within-subject design, but it has changed into between-subjects design.
 
-
-# Outcome measures
-# reactions time, likert responses
-
-# Think through df
-# rows = participants
-# columns = condition(s), DVs, demographics
-
-# rep = repetition
-
+# Set up df
 df <- data.frame(Participant=rep(0, sampleSizeRequired * condPerParticipant),
                  Condition=rep("NA", sampleSizeRequired, condPerParticipant),
                  ReactionTime=rep(0, sampleSizeRequired, condPerParticipant),
@@ -60,11 +51,10 @@ df <- data.frame(Participant=rep(0, sampleSizeRequired * condPerParticipant),
 
 df$Participant <- rep(1:sampleSizeRequired, each = condPerParticipant)
 
-# assign participants to a condition
+# assign each participant into one of the four condition, equally
 df$Condition <- (rep(condLabels, size = sampleSizeRequired, replace = TRUE))
 
 # create random RT in 4 conditions, this is seemed as the mean RT for all trials.
-
 df$ReactionTime[df$Condition == "Excited"] = pmax(rnorm(sampleSizeRequired/condPerParticipant,
   mean = 1500, sd = 500), 300)
 df$ReactionTime[df$Condition == "Angry"] = 
@@ -76,15 +66,15 @@ df$ReactionTime[df$Condition == "Sad"] = pmax(rnorm(sampleSizeRequired/condPerPa
   mean = 3000, sd = 500), 300)
 
 # Assign BetrayalChoices around 0 - 15 with higher number in Angry and Sad conditions, lower number in Excited and calm conditions
-
 df$BetrayalChoices[df$Condition == "Excited"] <- round(rnorm(sum(df$Condition == "Excited"), mean = 4, sd = 3))
 df$BetrayalChoices[df$Condition == "Angry"] <- round(rnorm(sum(df$Condition == "Angry"), mean = 12, sd = 3))
 df$BetrayalChoices[df$Condition == "Calm"] <- round(rnorm(sum(df$Condition == "Calm"), mean = 4, sd = 3))
 df$BetrayalChoices[df$Condition == "Sad"] <- round(rnorm(sum(df$Condition == "Sad"), mean = 12, sd = 3))
 
+# Set maximum and minimum responses (cannot be negative or too many)
 df$BetrayalChoices <- pmin(pmax(df$BetrayalChoices, 0), 15)
 
-# create random responses on likert scale
+# create random responses on likert scale (only for collecting purposes)
 df$Excited <- sample(c(1:5), sampleSizeRequired, replace = TRUE)
 df$Determined <- sample(c(1:5), sampleSizeRequired, replace = TRUE)
 df$Strong <- sample(c(1:5), sampleSizeRequired, replace = TRUE)
@@ -111,7 +101,7 @@ summary(df)
 
 # Group condition and betrayal choices together, and see differences in RT
 df_rt_summary_by_betrayalchoices_cond <- df %>%
-group_by(Condition, BetrayalChoices) %>% #what vars you want to group by
+group_by(Condition, BetrayalChoices) %>%
 summarise(
     mean_RT = mean(ReactionTime),
     median_RT = median(ReactionTime),
@@ -131,7 +121,7 @@ print(df_rt_summary_by_betrayalchoices_cond)
 
 ```
 
-## The total count of the same reaction times between conditions
+## The Distribution of Reaction Times Between Conditions
 
 ```{r}
 
@@ -183,19 +173,24 @@ print(lsd_results_RT)
 
 # estimate = if positive, left > right; if negative, left < right.
 
-## Significant
-# Angry vs. Calm → Angry had significantly shorter reaction times
 
-# Angry vs. Sad → Angry had significantly shorter reaction times
+# Significant
 
-# Calm vs. Excited → Calm had significantly longer reaction times
+## Angry vs. Calm → Angry had significantly shorter reaction times
 
-# Excited vs. Sad → Excited had significantly shorter reaction times
+## Angry vs. Sad → Angry had significantly shorter reaction times
 
-## Not significant
-# Angry vs. Excited → No significant difference in reaction times, suggesting both "Angry" and "Excited" conditions led to similar reaction times
+## Calm vs. Excited → Calm had significantly longer reaction times
 
-# Calm vs. Sad → No significant difference in reaction times, suggesting both "Calm" and "Sad" conditions led to similar reaction times
+## Excited vs. Sad → Excited had significantly shorter reaction times
+
+# Not significant
+
+## Angry vs. Excited → No significant difference in reaction times, suggesting both "Angry" and "Excited" conditions led to similar reaction times
+
+## Calm vs. Sad → No significant difference in reaction times, suggesting both "Calm" and "Sad" conditions led to similar reaction times
+
+## Tempo of bgm does influence the reaction time during decision games!
 
 ```
 
@@ -210,19 +205,21 @@ print(lsd_results_Choice)
 
 # estimate = if positive, left > right; if negative, left < right.
 
-## Significant
-# Angry vs. Calm → Angry had significantly more betrayal choices
+# Significant
+## Angry vs. Calm → Angry had significantly more betrayal choices
 
-# Angry vs. Excited → Angry had significantly more betrayal choices
+## Angry vs. Excited → Angry had significantly more betrayal choices
 
-# Calm vs. Excited → Calm had significantly more betrayal choices
+## Calm vs. Excited → Calm had significantly more betrayal choices
 
-# Calm vs. Sad → Calm had significantly fewer betrayal choices
+## Calm vs. Sad → Calm had significantly fewer betrayal choices
 
-# Excited vs. Sad → Excited had significantly fewer betrayal choices
+## Excited vs. Sad → Excited had significantly fewer betrayal choices
 
-## Not significant
-# Angry vs. Sad → This suggests that both "Angry" and "Sad" conditions led to similar betrayal choices.
+# Not significant
+## Angry vs. Sad → This suggests that both "Angry" and "Sad" conditions led to similar betrayal choices.
+
+## Valence of bgm does influence the choices during decision games!
 
 ```
 
@@ -246,7 +243,7 @@ ggplot(df, aes(x = Condition, y = ReactionTime, fill = Condition)) +
        y = "Reaction Time (ms)") +
   theme(legend.position = "none")
 
-# condition matching betrayal counts
+# box plot for betrayal choices matching each conditions
 ggplot(df, aes(x = Condition, y = BetrayalChoices, fill = Condition)) +
   geom_boxplot(alpha = 0.6, outlier.shape = NA) +  
   geom_jitter(color = "black", size = 1, alpha = 0.5, width = 0.2) +  
@@ -262,7 +259,6 @@ ggplot(df, aes(x = Condition, y = BetrayalChoices, fill = Condition)) +
        y = "BetrayalChoices") +
   theme(legend.position = "none")
 
-# Scatter plot with conditions, betrayal choices and reaction time
 # Scatter plot with conditions, betrayal choices and reaction time
 ggplot(df, aes(x = BetrayalChoices, y = ReactionTime, color = Condition)) +
   geom_point(alpha = 0.7, size = 3) +  # Plot points
