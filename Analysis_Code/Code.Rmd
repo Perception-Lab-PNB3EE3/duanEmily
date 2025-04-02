@@ -254,26 +254,26 @@ ggplot(df, aes(x = Condition, y = BetrayalChoices, fill = Condition)) +
     "Sad" = rgb(255/255, 97/255, 204/255, alpha = 0.7)  # Corrected color for Sad
   )) + 
   theme_minimal() +  
-  labs(title = "BetrayalChoices Distributed by Condition",
+  labs(title = "Betrayal choices Distributed by Condition",
        x = "Types of Background Music",
-       y = "BetrayalChoices") +
+       y = "Betrayal choices") +
   theme(legend.position = "none")
 
 # Scatter plot with conditions, betrayal choices and reaction time
 ggplot(df, aes(x = BetrayalChoices, y = ReactionTime, color = Condition)) +
   geom_point(alpha = 0.7, size = 3) +  # Plot points
-  geom_smooth(method = "lm", se = TRUE, aes(color = Condition), linetype = "dashed") +  # Add regression lines
+  geom_smooth(method = "lm", se = TRUE, linetype = "dashed") +  # Add regression lines
   labs(
     title = "Scatter Plot of Reaction Time vs Betrayal Choices",
     x = "Betrayal Choices",
-    y = "Reaction Time",
+    y = "Reaction Time (ms)",
     color = "Condition"
   ) +
   scale_color_manual(values = c(
-    "Excited" = rgb(248/255, 118/255, 109/255, alpha = 0.7),  # Adjust alpha here
-    "Angry" = rgb(0/255, 191/255, 196/255, alpha = 0.7), 
-    "Calm" = rgb(122/255, 174/255, 0/255, alpha = 0.7),
-    "Sad" = rgb(255/255, 97/255, 204/255, alpha = 0.7)  # Corrected color for Sad
+    "Excited" = "#00BFC4",  
+    "Angry" = "#F8766D", 
+    "Calm" = "#7AAE00",
+    "Sad" = "#d7b2fe"
   )) +
   theme_minimal()
 
